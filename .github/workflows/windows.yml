@@ -10,6 +10,7 @@ on:
 jobs:
   build:
     runs-on: windows-2022
+    timeout-minutes: 15
 
     steps:
       - name: Check out
@@ -34,15 +35,15 @@ jobs:
         name: Cache stack dependencies
         with:
           path: C:\Users\runneradmin\AppData\Local\Programs\stack
-          key: ${{ runner.os }}-stack-deps-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-stack-deps
+          key: ${{ runner.os }}-stack-deps-${{ hashFiles('**/stack.yaml.lock', '**/stack.yaml', '**/*.cabal', '**/package.yaml') }}
+          restore-keys: ${{ runner.os }}-stack-deps-
 
       - uses: actions/cache@v4
         name: Cache stack build
         with:
           path: C:\Users\runneradmin\AppData\Roaming\stack
-          key: ${{ runner.os }}-stack-build-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-stack-build
+          key: ${{ runner.os }}-stack-build-${{ hashFiles('**/stack.yaml.lock', '**/stack.yaml', '**/*.cabal', '**/package.yaml') }}
+          restore-keys: ${{ runner.os }}-stack-build-
 
       - name: Build
         run: stack build
